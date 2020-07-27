@@ -92,6 +92,37 @@ class UserController extends Controller {
 	 */
 	public function update( Request $request, User $user ) {
 
+		$validations = array();
+		foreach ( $request->all() as $key => $value ) {
+			switch ( $key ) {
+				case 'name':
+					$validations[ $key ] = 'required';
+					break;
+				case 'email':
+					$validations[ $key ] = 'required|email|unique:users';
+					break;
+				case 'password':
+					$validations[ $key ] = 'required';
+					break;
+			}
+		}
+
+		$validated = \Validator::make(
+			$request->all(),
+			$validations
+		);
+
+		if ( $validated->fails() ) {
+			return response()->json(
+				array(
+					'status'  => 'error',
+					'errors'  => $validated->errors(),
+					'message' => 'Validations erros',
+					'data'    => false,
+				)
+			);
+		}
+
 		foreach ( $request->all() as $key => $value ) {
 			if ( 'password' === $key ) {
 				$user->$key = Hash::make( $value );
@@ -101,7 +132,13 @@ class UserController extends Controller {
 		}
 		$user->save();
 
-		return response()->json( $user );
+		return response()->json(
+			array(
+				'status'  => 'success',
+				'message' => 'User updated -- ' . $user->id,
+				'data'    => $user,
+			)
+		);
 	}
 
 	/**
