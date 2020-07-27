@@ -25,6 +25,7 @@ class UserController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store( Request $request ) {
+
 		$validated = \Validator::make(
 			$request->all(),
 			array(
@@ -35,7 +36,14 @@ class UserController extends Controller {
 		);
 
 		if ( $validated->fails() ) {
-			return response()->json( array( 'errors' => $validated->errors() ) );
+			return response()->json(
+				array(
+					'status'  => 'error',
+					'errors'  => $validated->errors(),
+					'message' => 'Validations erros',
+					'data'    => false,
+				)
+			);
 		}
 
 		$user = new User();
@@ -46,7 +54,13 @@ class UserController extends Controller {
 
 		$user->save();
 
-		return response()->json( $user );
+		return response()->json(
+			array(
+				'status'  => 'success',
+				'message' => 'User inserted -- ' . $user->id,
+				'data'    => $user,
+			)
+		);
 	}
 
 

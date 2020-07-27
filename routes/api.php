@@ -15,11 +15,17 @@ use Illuminate\Support\Facades\Route;
 */
 Route::apiResource( 'users', 'API\UserController' );
 
-Route::get( 'abc', 'API\UserController@index' );
 
 Route::fallback(
 	function() {
-		return response()->json( array( 'message' => 'Not Found.' ), 404 );
+		return response()->json(
+			array(
+				'status'  => 'error',
+				'message' => 'Not Found.',
+				'data'    => false,
+			),
+			404
+		);
 	}
-)->name('fallback.error.404');
+)->name( 'fallback.error.404' );
 
