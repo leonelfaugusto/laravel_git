@@ -15,6 +15,23 @@ use Illuminate\Support\Facades\Route;
 */
 Route::apiResource( 'users', 'API\UserController' );
 
+Route::group(
+	array(
+
+		'middleware' => 'api',
+		'prefix'     => 'auth',
+
+	),
+	function ( $router ) {
+
+		Route::post( 'login', 'API\AuthController@login' )->name( 'login' );
+		Route::post( 'logout', 'API\AuthController@logout' );
+		Route::post( 'refresh', 'API\AuthController@refresh' );
+		Route::post( 'me', 'API\AuthController@me' );
+
+	}
+);
+
 
 Route::fallback(
 	function() {
